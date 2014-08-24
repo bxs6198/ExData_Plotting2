@@ -147,7 +147,7 @@
             facet_grid(. ~ type) +
             labs(x="Sample Year", 
                  y=expression("Total " * PM[2.5] * " Emissions"),
-                 title=expression("Total " * PM[2.5] * " Emissions by Type for Baltimore City, MD")) +
+                 title=expression("Total " * PM[2.5] * " Emissions by Source Type for Baltimore City, MD")) +
             geom_text(aes(label=paste(format(emissions, digits=2, nsmall=1))),
                       size=4,
                       color="black",
