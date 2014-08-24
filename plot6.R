@@ -80,6 +80,7 @@
     library("rstudio")
     library("RColorBrewer")
     library("ggplot2")
+    library("scales")
     
 ##
 ##  Step 3: Apply a transform function on the NEI data frame to get the total 
@@ -166,24 +167,60 @@
     ##  Open the PNG device
     ##
     png(filename="plot6.png",
-        width=1920,
+        width=1440,
         height=960)
 
     ##  Barplot with each 'ei.sector' in a separate facet
     ##
-    gb <- ggplot(tidyNEI, aes(x=year, y=emissions, fill=ei.sector)) +
-            geom_bar(stat="identity") + 
-            facet_grid(. ~ fips ~ ei.sector, scales="free") +
+    ##  gb <- ggplot(tidyNEI, aes(x=year, y=emissions, fill=ei.sector)) +
+    ##          geom_bar(stat="identity") + 
+    ##          facet_grid(. ~ fips ~ ei.sector, scales="free") +
+    ##          labs(x="Sample Year", 
+    ##               y=expression("Total " * PM[2.5] * " Emissions"),
+    ##               title=expression("Total " * PM[2.5] * " Emissions by Vehicle Source by City")) +
+    ##          geom_text(aes(label=paste(format(emissions, digits=2, nsmall=1))),
+    ##                    size=4,
+    ##                    color="black",
+    ##                    vjust=-0.5) +
+    ##          theme(title=element_text(face="bold",size=rel(1.5)),
+    ##                strip.text = element_text(face="bold",size=rel(1.25)),
+    ##                legend.position="none") +
+    ##          scale_fill_brewer(palette="Set2")
+    
+    ##
+    ##  NOTE TO REVIEWER:
+    ##  =================
+    ##  I originally created a bar plot facet grid (see above) to display total 
+    ##  emissions by vehicle source and by city.  This generated eight different
+    ##  plots that I then had to compare to determine "Which city has seen 
+    ##  greater changes over time in motor vehicle emissions".  After a few
+    ##  minutes thought I realized I couldn't really answer the question with
+    ##  the plots I had generated.
+    ##
+    ##  I went back to the forums and found a discussion concerning this very
+    ##  topic "Project 2, Question 6. What constitutes a "change"?"
+    ##  (https://class.coursera.org/exdata-005/forum/thread?thread_id=110)
+    ##  and decided that a scatter plot with a smoothed conditional mean
+    ##  would be a better way to visually approximate the answer to the 
+    ##  question.
+    ##
+    
+    ##  Scatterplot with a smoothed conditional mean (linear)
+    ##
+    gb <- ggplot(tidyNEI, aes(x=year, y=emissions, color=ei.sector)) +
+            geom_point(size=10, alpha=0.25) + 
+            geom_smooth(aes(group=1), size=2, linetype=1, method="lm", se=FALSE) + 
+            facet_wrap(~ fips, ncol=2, scales="free") +
             labs(x="Sample Year", 
                  y=expression("Total " * PM[2.5] * " Emissions"),
                  title=expression("Total " * PM[2.5] * " Emissions by Vehicle Source by City")) +
-            geom_text(aes(label=paste(format(emissions, digits=2, nsmall=1))),
-                      size=4,
-                      color="black",
-                      vjust=-0.5) +
             theme(title=element_text(face="bold",size=rel(1.5)),
-                  strip.text = element_text(face="bold",size=rel(1.25)),
-                  legend.position="none") +
+                  strip.text=element_text(face="bold",size=rel(1.25)),
+                  legend.title=element_text(color="chocolate", size=16, face="bold"),
+                  legend.text=element_text(face="bold",size=rel(1.0)),
+                  legend.position="bottom",
+                  legend.box="horizontal") +
+            scale_color_discrete(name="Vehicle Source") +
             scale_fill_brewer(palette="Set2")
     
     ##  Display the plot
