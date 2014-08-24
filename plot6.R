@@ -100,7 +100,7 @@
     NEI <- arrange(NEI,year)
     
     ##  Subset the SCC codes to only include rows that contain 'ei.sector'
-    ##  values with 'Coal' in the name.  This will select all SCC codes
+    ##  values with 'Vehicles' in the name.  This will select all SCC codes
     ##  from the following four 'ei.sector' categories:
     ##
     ##      Mobile – On-road – Diesel Heavy Duty Vehicles
@@ -109,7 +109,7 @@
     ##      Mobile – On-road – Gasoline Light Duty Vehicles
     ##
     ##  'ei.sector' was selected because it appeared to be the highest-level
-    ##  categorical description of "coal combustion-related sources" required
+    ##  categorical description of "motor vehicle sources" required
     ##  by the assignment.
     ##
     Codes <- SCC[grep("*Vehicles",SCC$ei.sector),c("scc","ei.sector")]
